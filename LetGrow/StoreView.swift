@@ -84,9 +84,10 @@ struct StoreView: View {
                                         .scaledToFit()
                                         .frame(width: 20, height: 20)
                                     
-                                    Text("\(item.price)")
+                                    Text("\(userCoins)")
                                         .font(.headline)
                                         .foregroundColor(.yellow)
+                                        
                                 }
                                 .padding(8)
                                 .background(Color.white)

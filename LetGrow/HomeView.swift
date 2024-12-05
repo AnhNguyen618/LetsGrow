@@ -29,7 +29,9 @@ struct HomeView: View {
     @State private var isSpotifyConnected: Bool = false // Track Spotify connection status
     @State private var userCoins: Int = 100 // User Coin
     @State private var showingPauseConfirmation: Bool = false
-
+    @State private var showCompletionNotification: Bool = true
+    @State private var completionMessage: String = ""
+    @State private var hasLoggedMood: Bool = false // variable to track mood logging
     // Array of images for the timer
     let imageStages = ["egg_timer", "egg_cracking", "half_egg", "pet_crack", "pet_egg", "pet_done"]
     // Timer that updates every second
@@ -626,7 +628,94 @@ struct HomeView: View {
                     .transition(.opacity) // Smooth fade-in/out
                     .animation(.easeInOut, value: showingPauseConfirmation)
                 }
+                
 
+
+                // Reward Information Window
+                if showCompletionNotification {
+                    ZStack {
+                        // Dimmed background
+                        Color.black.opacity(0.6)
+                            .edgesIgnoringSafeArea(.all)
+                            .onTapGesture {
+                                withAnimation {
+                                    showCompletionNotification = false
+                                }
+                            }
+                        
+                        VStack(spacing: 20) {
+                            // Reward Info Box
+                            VStack(spacing: 15) {
+                                
+                                Text("Welcome Your New Pet!")
+                                    .foregroundColor(Color.yellow)
+                                    .fontWeight(.bold)
+                                    .font(.custom("Noteworthy", size: 20))
+                                
+                                Image("pet_done")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 200, height: 100)
+
+                                    Text("Log your mood to claim your reward!")
+                                        .foregroundColor(Color.yellow)
+                                        .fontWeight(.bold)
+                                        .font(.custom("Noteworthy", size: 16))
+                                   
+                                .frame(maxWidth: .infinity)
+                                
+                                // Mood Input Button
+                                if !hasLoggedMood {
+                                    Button(action: {
+                                        showingMoodInput = true
+                                    }) {
+                                        Text("Log Your Mood")
+                                            .foregroundColor(.black)
+                                            .padding()
+                                            .frame(maxWidth: .infinity)
+                                            .background(Color(red: 250 / 255, green: 245 / 255, blue: 234 / 255))
+                                            .cornerRadius(12)
+                                            .font(.custom("Noteworthy", size: 16))
+                                    }
+                                }
+                                
+                                // Collect Reward Button
+                                Button(action: {
+                                    if hasLoggedMood {
+                                        withAnimation {
+                                            showCompletionNotification = false
+                                        }
+                                    }
+                                }) {
+                                    HStack {
+                                        Image("coin")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 20, height: 20)
+                                        Text("50") // Number of coins earned
+                                            .font(.custom("Noteworthy", size: 16))
+                                            .foregroundColor(.yellow)
+                                            .fontWeight(.bold)
+                                    }
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(hasLoggedMood ? Color.yellow : Color.gray)
+                                    .cornerRadius(12)
+                                }
+                                .disabled(!hasLoggedMood) // Disable the button until mood is logged
+
+                            }
+                            .padding()
+                            .frame(width: 300, height: 400) // Adjust box size
+                            .background(Color(red: 0 / 255, green: 140 / 255, blue: 89 / 255).opacity(0.9))
+                            .cornerRadius(20)
+                            .shadow(radius: 10)
+                        }
+                    }
+                }
+
+
+                
 
                 // Zstack end here
             }
@@ -636,13 +725,17 @@ struct HomeView: View {
                 remainingTime -= 1
                 updateProgressBar()
                 updateImage()
-            } else if remainingTime == 0 && selectedMode == "Pomodoro Mode" {
-                remainingTime = isFocusTime ? pomodoroBreakTime * 60 : pomodoroFocusTime * 60
-                isFocusTime.toggle()
-                updateProgressBar()
-                updateImage()
+            } else if remainingTime == 0 {
+                // When the timer completes
+                isTimerRunning = false // Stop the timer
+                showCompletionNotification = true // Trigger the notification
+                completionMessage = "Well done! Your pet is growing stronger!" // Set the message
+
+                // Optional: Reward coins or progress
+                userCoins += 5 // Reward the user with coins
             }
         }
+
 
     }
     
