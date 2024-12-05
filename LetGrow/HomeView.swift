@@ -23,8 +23,11 @@ struct HomeView: View {
     @State private var totalTime: Int = 30 * 60 // Total timer duration (used for resetting)
     @State private var currentImageIndex: Int = 0 // Current image index
     @State private var circleProgress: CGFloat = 0.0 // Circular progress (0 to 1)
-
-    
+    @State private var showingLockdownPopup: Bool = false
+    @State private var showingLockdownDeactivationPopup: Bool = false
+    @State private var showingSpotifyPopup: Bool = false
+    @State private var isSpotifyConnected: Bool = false // Track Spotify connection status
+    @State private var userCoins: Int = 100 // User Coin
     // Array of images for the timer
     let imageStages = ["egg_timer", "egg_cracking", "half_egg", "pet_crack", "pet_egg", "pet_done"]
     // Timer that updates every second
@@ -33,11 +36,10 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // Background image for the home screen
                 Image("background")
                     .resizable()
                     .scaledToFill()
-                    .edgesIgnoringSafeArea(.all) // Extends image to cover the entire screen
+                    .edgesIgnoringSafeArea(.all)
                     .opacity(isMenuOpen ? 0.5 : 1)
 
 
@@ -73,17 +75,17 @@ struct HomeView: View {
                                 Image("coin")
                                     .resizable()
                                     .frame(width: 40, height: 40)
-                                Text("100") // Replace "100" with your dynamic coin count variable
-                                    .font(.system(size: 24, weight: .bold, design: .rounded)) // Bigger, bolder font
+                                Text("\(userCoins)")
+                                    .font(.system(size: 24, weight: .bold, design: .rounded))
                                     .foregroundColor(.yellow) // Yellow text
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
                                     .background(
-                                        Color.white.opacity(0.7) // White background with 70% opacity
+                                        Color.white.opacity(0.7)
                                     )
-                                    .cornerRadius(12) // Rounded edges for a polished look
-                                    .shadow(color: Color.gray.opacity(0.3), radius: 4, x: 0, y: 2) // Subtle shadow for highlighting
-
+                                    .cornerRadius(12)
+                                    .shadow(color: Color.gray.opacity(0.3), radius: 4, x: 0, y: 2)
+                                
                                 // Profile icon with navigation link
                                 NavigationLink(destination: ProfileView()) {
                                     Image("profile")
@@ -95,29 +97,42 @@ struct HomeView: View {
                             .padding(.top, 10)
                         }
                         .padding(.horizontal)
-                        .padding(.top, 10)
-
-                        // MARK: - Music and Calendar Buttons
+                        .padding(.top, 30)
+                        
+                        // MARK: - Music and Lockdown and Calendar Buttons
                         HStack {
                             // Music Button
                             Button(action: {
-                                // Action for music
+                                showingSpotifyPopup = true
                             }) {
                                 Image("music")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 60, height: 60)
                             }
+                            
                             // Lockdown Mode Button
                             Button(action: {
-                                // Toggle lockdown mode
-                                isLockdownActive.toggle()
+                                withAnimation {
+                                    isLockdownActive.toggle()
+                                    if isLockdownActive {
+                                        showingLockdownPopup = true
+                                        let generator = UIImpactFeedbackGenerator(style: .medium)
+                                        generator.impactOccurred()
+                                    } else {
+                                        showingLockdownDeactivationPopup = true
+                                        let generator = UINotificationFeedbackGenerator()
+                                        generator.notificationOccurred(.success)
+                                    }
+                                }
                             }) {
                                 Image(isLockdownActive ? "lock_on" : "lock_off")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 60, height: 60)
                             }
+                            
+                            
                             
                             // Calendar Button
                             Button {
@@ -131,7 +146,7 @@ struct HomeView: View {
                             }
                             
                         }
-
+                        
                         // MARK: - Timer Display and Mission
                         // Inside the Timer Display and Mission Section
                         VStack {
@@ -176,81 +191,105 @@ struct HomeView: View {
                             }
                             .padding(.bottom, 30)
                         }
-
                         
-
+                        
+                        
                         Button(action: {
                             withAnimation {
                                 isEditingMission.toggle() // Toggles editing mode
                             }
                         }) {
-                            Text(missionName)
-                                .foregroundColor(.yellow)
-                                .font(.custom("Noteworthy", size: 16)) // Font size
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2) // Limit to 2 lines
-                                .minimumScaleFactor(300) // Shrinks the font size down
-                                .padding(.horizontal, 1) // Minimize padding
-                                .padding(.bottom, 15) // Adjust bottom padding
-                                .frame(width: 400, height: 160)
-                                .background(
+                            ZStack {
+                                GeometryReader { geometry in
+                                    // Calculate the width of the text dynamically
+                                    let textWidth = calculateTextWidth(text: missionName, font: UIFont(name: "Noteworthy", size: 16) ?? UIFont.systemFont(ofSize: 16))
+                                    
                                     Image("mission_holder")
                                         .resizable()
                                         .scaledToFill()
-                                        .frame(width: CGFloat(missionName.count), height: 160)
-                                )
+                                        .frame(width: max(textWidth + 20, 160), height: 160, alignment: .trailing) // Fix height and dynamically adjust width
+                                        .clipped() // Ensure no overflow beyond bounds
+                                        .padding(.top, 10) // Vertical spacing if needed
+                                        .frame(maxWidth: .infinity, alignment: .leading) // Align to the left within the available space
+                                    
+                                    
+                                }
+                                .frame(height: 160) // Keep consistent height
+                                
+                                Text(missionName)
+                                    .foregroundColor(.yellow)
+                                    .font(.custom("Noteworthy", size: missionName.count > 20 ? 12 : 16)) // Adjust font size dynamically
+                                    .fontWeight(.semibold)
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(2) // Restrict text to 2 lines
+                                    .minimumScaleFactor(0.7) // Ensure text shrinks only up to 70% of the font size
+                                    .padding(.horizontal, 10)
+                                    .frame(maxWidth: 300, maxHeight: 80, alignment: .center) // Limit the text container size
+                                
+                                
+                            }
                         }
-                        .frame(height: 20)
-
-
-                        // Editable Text Field for Mission Name
+                        .frame(height: 10)
+                        .padding(.horizontal, 120)
                         if isEditingMission {
-                            TextField("Enter new mission name", text: $missionName)
+                            TextField("Enter mission name", text: $missionName)
+                                .onChange(of: missionName) { _, _ in
+                                    if missionName.count > 30 {
+                                        missionName = String(missionName.prefix(30))
+                                    }
+                                }
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .padding()
-                        }
-
-                        // MARK: - Timer Display with Tap to Edit
-                        Text(timeString(from: remainingTime))
-                            .font(.largeTitle)
-                            .foregroundColor(Color(red: 33 / 255, green: 105 / 255, blue: 208 / 255))
-                            .onTapGesture {
-                                showingTimePicker.toggle() // Opens time picker
-                            }
-                        // MARK: - Start/Pause Timer Button and Mood Icon Button
-                        HStack(spacing: 10) {
                             
-                            // Mood Icon Button
-                            Button(action: {
-                                showingMoodInput = true // Opens mood input modal
-                            }) {
-                                Image("mood_icon") // Replace with your mood icon
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100, height: 100)
-                            }
-                            // Start/Pause Timer Button
-                            Button(action: {
-                                if !isTimerRunning {
-                                    // Set time based on selected mode
-                                    remainingTime = selectedMode == "Pomodoro Mode" ? pomodoroFocusTime * 60 : selectedMinutes * 60
-                                }
-                                isTimerRunning.toggle() // Toggles timer state
-                            }) {
-                                Image(isTimerRunning ? "pause_button" : "grow_button") // Use custom images
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100, height: 100)
-                            }
                         }
-
-                        // MARK: - Timer Mode Selection Buttons
-                        timerModeSelectors
-
-                        Spacer()
+                        
+                        VStack(spacing: 0) {
+                            
+                            // MARK: - Timer Display with Tap to Edit
+                            Text(timeString(from: remainingTime))
+                                .font(.system(size: 48, weight: .bold, design: .rounded)) // Large, rounded font
+                                .foregroundColor(Color(red: 33 / 255, green: 105 / 255, blue: 208 / 255)) // Custom blue color
+                                .shadow(color: Color.black.opacity(0.3), radius: 4, x: 0, y: 2) // Subtle shadow for depth
+                                .padding(.horizontal, 30)
+                                .onTapGesture {
+                                    showingTimePicker.toggle() // Opens time picker
+                                }
+                                .padding(.top,5)
+                            
+                            // MARK: - Start/Pause Timer Button and Mood Icon Button
+                            HStack(spacing: 10) {
+                                
+                                // Mood Icon Button
+                                Button(action: {
+                                    showingMoodInput = true // Opens mood input modal
+                                }) {
+                                    Image("mood_icon")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100, height: 100)
+                                }
+                                // Start/Pause Timer Button
+                                Button(action: {
+                                    if !isTimerRunning {
+                                        // Set time based on selected mode
+                                        remainingTime = selectedMode == "Pomodoro Mode" ? pomodoroFocusTime * 60 : selectedMinutes * 60
+                                    }
+                                    isTimerRunning.toggle() // Toggles timer state
+                                }) {
+                                    Image(isTimerRunning ? "pause_button" : "grow_button") // Use custom images
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 100, height: 100)
+                                }
+                            }
+                            
+                            // MARK: - Timer Mode Selection Buttons
+                            timerModeSelectors
+                            
+                            Spacer()
+                        }
+                        .padding(.vertical)
                     }
-                    .padding(.vertical)
                 }
                 .opacity(isMenuOpen ? 0.1 : 1)
                 .navigationBarTitleDisplayMode(.inline)
@@ -335,7 +374,161 @@ struct HomeView: View {
                         ])
                         .presentationBackground(.clear)
                 }
+                
+                
+                // LOCKDOWN ON WINDOW
+                if showingLockdownPopup {
+                    ZStack {
+                        Color.black.opacity(0.6)
+                            .edgesIgnoringSafeArea(.all)
 
+                        VStack(spacing: 20) {
+                            Image(systemName: "lock.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .foregroundColor(.red)
+
+                            Text("Lockdown Mode Activated")
+                                .font(.headline)
+                                .foregroundColor(.white)
+
+                            Text("Focus on your tasks. Distractions are locked away!")
+                                .font(.subheadline)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.white.opacity(0.8))
+                                .padding(.horizontal)
+
+                            Button("Got it!") {
+                                withAnimation {
+                                    showingLockdownPopup = false
+                                }
+                            }
+                            .padding()
+                            .background(Color.red)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.9))
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
+                        .transition(.opacity) // Smooth fade-out
+                        .animation(.easeInOut, value: showingLockdownPopup)
+                    }
+                }
+                // LOCKDOWN OFF WINDOW
+                if showingLockdownDeactivationPopup {
+                    ZStack {
+                        Color.black.opacity(0.6) // Dimmed background
+                            .edgesIgnoringSafeArea(.all)
+                            .onTapGesture {
+                                withAnimation {
+                                    showingLockdownDeactivationPopup = false
+                                }
+                            }
+
+                        VStack(spacing: 20) {
+                            Image(systemName: "lock.open.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .foregroundColor(.green)
+
+                            Text("Lockdown Mode Deactivated")
+                                .font(.headline)
+                                .foregroundColor(.white)
+
+                            Text("Feel free to explore other tasks!")
+                                .font(.subheadline)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.white.opacity(0.8))
+                                .padding(.horizontal)
+
+                            Button("Got it!") {
+                                withAnimation {
+                                    showingLockdownDeactivationPopup = false
+                                }
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.9))
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
+                        .frame(maxWidth: 300) // Ensures consistent size
+                    }
+                    .transition(.opacity) // Smooth fade-in/out
+                    .animation(.easeInOut, value: showingLockdownDeactivationPopup)
+                }
+
+                // SPOTIFY WINDOW
+                if showingSpotifyPopup {
+                    ZStack {
+                        Color.black.opacity(0.6) // Dimmed background
+                            .edgesIgnoringSafeArea(.all)
+                            .onTapGesture {
+                                withAnimation {
+                                    showingSpotifyPopup = false
+                                }
+                            }
+
+                        VStack(spacing: 20) {
+                            Image("spotify_logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+
+                            Text("Connect to Spotify")
+                                .font(.headline)
+                                .foregroundColor(.white)
+
+                            Text("Play your favorite focus playlists from Spotify !")
+                                .font(.subheadline)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.white.opacity(0.8))
+                                .padding(.horizontal)
+
+                            Button(action: {
+                                connectToSpotify()
+                            }) {
+                                Text("Open Spotify")
+                                    .fontWeight(.bold)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.green)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10)
+                            }
+                            .padding(.horizontal)
+
+                            Button("Dismiss") {
+                                withAnimation {
+                                    showingSpotifyPopup = false
+                                }
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.white)
+                            .foregroundColor(.black)
+                            .cornerRadius(10)
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.9))
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
+                        .frame(maxWidth: 300) // Ensures consistent size
+                    }
+                    .transition(.opacity) // Smooth fade-in/out
+                    .animation(.easeInOut, value: showingSpotifyPopup)
+                }
+
+
+                // Zstack end here
             }
         }
         .onReceive(timer) { _ in
@@ -350,7 +543,10 @@ struct HomeView: View {
                 updateImage()
             }
         }
+
     }
+    
+    
     
     struct CustomDetent: CustomPresentationDetent {
         static func height(in context: Context) -> CGFloat? {
@@ -425,32 +621,53 @@ struct HomeView: View {
                 // Spacer to create space above the menu
                 Spacer()
                 .frame(height: 20) // Adjust this value to control the vertical position
-                Button("Home") { /* Action */ }
-                .font(.headline)
-                .padding(.top, 50)
+
+
+                NavigationLink(destination: StoreView()) {
+                    Text("LetGrow Store")
+                        .font(.headline)
+                        .padding(.top, 20)
+                }
                 
-                Button("Tasks") { /* Action */ }
-                .font(.headline)
-                .padding(.top, 20)
-                                               
-                Button("LetGrow Store") { /* Action */ }
-                .font(.headline)
-                .padding(.top, 20)
-                                               
-                 Button("School Store") { /* Action */ }
-                 .font(.headline)
-                 .padding(.top, 20)
-                                               
-                Button("Setting") { /* Action */ }
-                 .font(.headline)
-                 .padding(.top, 20)
+                NavigationLink(destination: SJSUStoreView()){
+                    Text("School Store")
+                        .font(.headline)
+                        .padding(.top,20)
+                }
+                
+                
+                NavigationLink(destination: SignupView()) {
+                    Text("Sign Up")
+                        .font(.headline)
+                        .padding(.top, 20)
+                }
+                
                 Spacer()
             }
             .frame(maxWidth: 150)
+            .padding(.top,40)
             .padding()
             .background(Color.white)
             .edgesIgnoringSafeArea(.all)
         }
+        
+    }
+    // Helper function to calculate text width dynamically
+    private func calculateTextWidth(text: String, font: UIFont) -> CGFloat {
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        let textSize = text.size(withAttributes: attributes)
+        return textSize.width
+    }
+    // Spotify Connection Simulation
+    func connectToSpotify() {
+        // Add Spotify connection logic here
+        isSpotifyConnected = true
+        showingSpotifyPopup = false // Close pop-up after connection
+    }
+
+    func disconnectFromSpotify() {
+        // Add Spotify disconnection logic here
+        isSpotifyConnected = false
     }
 
     // MARK: - Helper Functions

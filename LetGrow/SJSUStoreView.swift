@@ -18,29 +18,26 @@ struct SJSUStoreView: View {
     @State private var navigateToHome = false // State variable to control navigation
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
-                // Background Image
                 Image("sjsu_store_background")
                     .resizable()
                     .scaledToFill()
                     .edgesIgnoringSafeArea(.all)
-                
+    
                 VStack {
                     HStack {
                         VStack {
                             // Home Button
                             Button(action: {
-                                navigateToHome = true // Set to true to activate NavigationLink
+                                navigateToHome = true // Set to true to activate navigation
                             }) {
                                 Image("home_button")
                                     .resizable() // Allows resizing the image
                                     .scaledToFit() // Maintains the aspect ratio
-                                    .frame(width: 80, height: 80) // Larger size for the home button
-                                    .padding() // Optional padding around the button
+                                    .frame(width: 80, height: 80)
                             }
                             .frame(width: 100, height: 100)
-                            .contentShape(Rectangle())
                             
                             // Coin Image and Text
                             HStack {
@@ -59,22 +56,23 @@ struct SJSUStoreView: View {
                         }
                         
                         Spacer()
+                        
                     }
                     .padding(.horizontal)
                     .padding(.top, 20)
                     
-                    Spacer(minLength: 100)
+                    Spacer()
                     
                     // Item Grid
                     ScrollView {
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
                             ForEach(items) { item in
-                                VStack(spacing: 0) {
+                                VStack(spacing: 5) {
                                     ZStack {
                                         Image(item.imageName)
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
-                                            .frame(width: 300, height: 340)
+                                            .frame(width: 300, height: 300)
                                     }
                                     
                                     HStack {
@@ -100,15 +98,13 @@ struct SJSUStoreView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal)
+        
                     }
-                    .frame(height: 250)
-
-                    Spacer()
+                    .frame(height: 300)
+                    .padding(.bottom, 20)
                 }
-
-                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
-                    EmptyView()
+                .navigationDestination(isPresented: $navigateToHome) {
+                    HomeView()
                 }
             }
         }

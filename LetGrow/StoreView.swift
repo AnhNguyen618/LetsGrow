@@ -103,7 +103,6 @@ struct StoreView: View {
             }
             .navigationBarHidden(true) // Hides default navigation bar
             .fullScreenCover(isPresented: $navigateToHome) {
-                // Navigate to home (replace with your HomeView)
                 HomeView()
             }
         }
