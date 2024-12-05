@@ -21,9 +21,9 @@ struct StreakView: View {
                         HStack(spacing: 5) {
                             Image("coin")
                                 .resizable()
-                                .frame(width: 15, height: 15)
+                                .frame(width: 20, height: 20)
                             Text("x\(20 + index * 10)")
-                                .font(.caption)
+                                .font(.system(size: 15, weight: .semibold, design: .default))
                                 .foregroundColor(.orange)
                         }
                     }
@@ -38,9 +38,9 @@ struct StreakView: View {
                 Text(isCollected ? "Collected" : "Collect")
                     .font(.headline)
                     .fontWeight(.semibold)
-                    .padding(10)
-                    .frame(width: 120)
-                    .background(isCollected ? Color.gray : Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255))
+                    .padding(8)
+                    .frame(width: 100)
+                    .background(isCollected ? Color.gray.opacity(0.5) : Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255))
                     .foregroundColor(.white)
                     .cornerRadius(8)
             }
@@ -50,15 +50,20 @@ struct StreakView: View {
 
             Spacer() // Pushes content upward to avoid crowding the bottom
         }
-        .padding(.bottom, 120)
+        .padding(.bottom, 200)
         .background(imageBackground)
     }
+        
     
     var imageBackground: some View {
         Image("streak_background")
             .resizable()
             .scaledToFill()
+            .padding(.bottom, 100)
+            .padding(.leading, 10)
+            .frame(maxWidth: .infinity, alignment: .trailing)
     }
+    
 }
 
 struct StreakView_Previews: PreviewProvider {
