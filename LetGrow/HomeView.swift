@@ -28,6 +28,8 @@ struct HomeView: View {
     @State private var showingSpotifyPopup: Bool = false
     @State private var isSpotifyConnected: Bool = false // Track Spotify connection status
     @State private var userCoins: Int = 100 // User Coin
+    @State private var showingPauseConfirmation: Bool = false
+
     // Array of images for the timer
     let imageStages = ["egg_timer", "egg_cracking", "half_egg", "pet_crack", "pet_egg", "pet_done"]
     // Timer that updates every second
@@ -270,17 +272,20 @@ struct HomeView: View {
                                 }
                                 // Start/Pause Timer Button
                                 Button(action: {
-                                    if !isTimerRunning {
-                                        // Set time based on selected mode
+                                    if isTimerRunning {
+                                        showingPauseConfirmation = true // Show confirmation popup
+                                    } else {
+                                        // Start the timer directly
                                         remainingTime = selectedMode == "Pomodoro Mode" ? pomodoroFocusTime * 60 : selectedMinutes * 60
+                                        isTimerRunning = true
                                     }
-                                    isTimerRunning.toggle() // Toggles timer state
                                 }) {
                                     Image(isTimerRunning ? "pause_button" : "grow_button") // Use custom images
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 100, height: 100)
                                 }
+
                             }
                             
                             // MARK: - Timer Mode Selection Buttons
@@ -383,7 +388,7 @@ struct HomeView: View {
                             .edgesIgnoringSafeArea(.all)
 
                         VStack(spacing: 20) {
-                            Image(systemName: "lock.fill")
+                            Image("lock_on")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 80, height: 80)
@@ -391,13 +396,17 @@ struct HomeView: View {
 
                             Text("Lockdown Mode Activated")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255))
+                                .font(.custom("Noteworthy", size: 16))
+                                .fontWeight(.bold)
 
                             Text("Focus on your tasks. Distractions are locked away!")
                                 .font(.subheadline)
+                                .fontWeight(.semibold)
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(.white.opacity(0.8))
+                                .font(.custom("Noteworthy", size: 16))
                                 .padding(.horizontal)
+                                .foregroundColor(Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255).opacity(0.8))
 
                             Button("Got it!") {
                                 withAnimation {
@@ -405,12 +414,14 @@ struct HomeView: View {
                                 }
                             }
                             .padding()
-                            .background(Color.red)
+                            .background(Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255))
                             .foregroundColor(.white)
                             .cornerRadius(10)
+                            .font(.custom("Noteworthy", size: 16))
+                            .fontWeight(.semibold)
                         }
-                        .padding()
-                        .background(Color.white.opacity(0.9))
+                        .padding() //49/74/103
+                        .background(Color(red: 49 / 255, green: 74 / 255, blue: 103 / 255).opacity(0.9))
                         .cornerRadius(20)
                         .shadow(radius: 10)
                         .transition(.opacity) // Smooth fade-out
@@ -429,7 +440,7 @@ struct HomeView: View {
                             }
 
                         VStack(spacing: 20) {
-                            Image(systemName: "lock.open.fill")
+                            Image("lock_off")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 80, height: 80)
@@ -437,13 +448,17 @@ struct HomeView: View {
 
                             Text("Lockdown Mode Deactivated")
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .font(.custom("Noteworthy", size: 16))
+                                .fontWeight(.bold)
+                                .foregroundColor(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
+                            
 
                             Text("Feel free to explore other tasks!")
-                                .font(.subheadline)
+                                .font(.custom("Noteworthy", size: 16))
+                                .fontWeight(.semibold)
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(.white.opacity(0.8))
                                 .padding(.horizontal)
+                                .foregroundColor(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
 
                             Button("Got it!") {
                                 withAnimation {
@@ -452,12 +467,14 @@ struct HomeView: View {
                             }
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.green)
+                            .background(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
                             .foregroundColor(.white)
                             .cornerRadius(10)
+                            .font(.custom("Noteworthy", size: 16))
+                            .fontWeight(.semibold)
                         }
                         .padding()
-                        .background(Color.white.opacity(0.9))
+                        .background(Color(red: 79 / 255, green: 104 / 255, blue: 133 / 255).opacity(0.9))
                         .cornerRadius(20)
                         .shadow(radius: 10)
                         .frame(maxWidth: 300) // Ensures consistent size
@@ -485,24 +502,29 @@ struct HomeView: View {
 
                             Text("Connect to Spotify")
                                 .font(.headline)
-                                .foregroundColor(.white)
-
+                                .foregroundColor(.green)
+                                .font(.custom("Noteworthy", size: 16))
+                                .fontWeight(.bold)
+                            
                             Text("Play your favorite focus playlists from Spotify !")
                                 .font(.subheadline)
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundColor(.green.opacity(0.8))
                                 .padding(.horizontal)
+                                .font(.custom("Noteworthy", size: 16))
+                                .fontWeight(.semibold)
 
                             Button(action: {
                                 connectToSpotify()
                             }) {
                                 Text("Open Spotify")
-                                    .fontWeight(.bold)
                                     .padding()
                                     .frame(maxWidth: .infinity)
                                     .background(Color.green)
                                     .foregroundColor(.white)
                                     .cornerRadius(10)
+                                    .font(.custom("Noteworthy", size: 16))
+                                    .fontWeight(.bold)
                             }
                             .padding(.horizontal)
 
@@ -514,17 +536,95 @@ struct HomeView: View {
                             .padding()
                             .frame(maxWidth: .infinity)
                             .background(Color.white)
-                            .foregroundColor(.black)
+                            .foregroundColor(.green)
                             .cornerRadius(10)
+                            .font(.custom("Noteworthy", size: 16))
+                            .fontWeight(.semibold)
                         }
                         .padding()
-                        .background(Color.white.opacity(0.9))
+                        .background(Color(red: 252 / 255, green: 245 / 255, blue: 234 / 255).opacity(0.9))
                         .cornerRadius(20)
                         .shadow(radius: 10)
                         .frame(maxWidth: 300) // Ensures consistent size
                     }
                     .transition(.opacity) // Smooth fade-in/out
                     .animation(.easeInOut, value: showingSpotifyPopup)
+                }
+
+                // Stop Timer Confirmation Popup
+                if showingPauseConfirmation {
+                    ZStack {
+                        // Dimmed background
+                        Color.black.opacity(0.6)
+                            .edgesIgnoringSafeArea(.all)
+
+                        VStack(spacing: 20) {
+                            Image("mission_icon")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 150, height: 150)
+                                .padding(.top,20)
+
+                            Text("Your pet believes in you!")
+                                .font(.custom("Noteworthy", size: 16))
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+
+                            Text("Stopping now will reset your progress, but your pet believes in you to stay focused!")
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.white.opacity(0.8))
+                                .padding(.horizontal)
+                                .font(.custom("Noteworthy", size: 16))
+                                .fontWeight(.semibold)
+
+                            HStack(spacing: 20) {
+                                // Cancel Button
+                                Button(action: {
+                                    withAnimation {
+                                        showingPauseConfirmation = false // Close popup
+                                    }
+                                }) {
+                                    Text("Stay")
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .frame(width: 120)
+                                        .background(Color.green)
+                                        .cornerRadius(10)
+                                        .font(.custom("Noteworthy", size: 16))
+                                        .fontWeight(.semibold)
+                                }
+
+                                // Confirm Button
+                                Button(action: {
+                                    withAnimation {
+                                        // Reset timer and progress
+                                        remainingTime = selectedMode == "Pomodoro Mode" ? pomodoroFocusTime * 60 : selectedMinutes * 60
+                                        isTimerRunning = false // Ensure timer is stopped
+                                        circleProgress = 0.0 // Reset progress bar
+                                        currentImageIndex = 0 // Reset pet's growth
+                                        showingPauseConfirmation = false // Close popup
+                                    }
+                                }) {
+                                
+                                    Text("Leave")
+                                    .foregroundColor(Color(red: 235 / 255, green: 85 / 255, blue: 135 / 255))
+                                    .padding()
+                                    .frame(width: 120)
+                                    .background(Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255))
+                                    .cornerRadius(10)
+                                    .font(.custom("Noteworthy", size: 16))
+                                    .fontWeight(.semibold)
+                                }
+                            }
+                        }
+                        .padding()
+                        .background(Color(red: 235 / 255, green: 85 / 255, blue: 135 / 255).opacity(0.8))
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
+                        .frame(maxWidth: 300) // Ensures consistent size
+                    }
+                    .transition(.opacity) // Smooth fade-in/out
+                    .animation(.easeInOut, value: showingPauseConfirmation)
                 }
 
 
