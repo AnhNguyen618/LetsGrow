@@ -655,7 +655,7 @@ struct HomeView: View {
                                     .fontWeight(.bold)
                                     .font(.custom("Noteworthy", size: 20))
                                 
-                                Image("pet_done")
+                                Image("pet_complete")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 200, height: 100)
