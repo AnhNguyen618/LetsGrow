@@ -1,4 +1,5 @@
 import SwiftUI
+import WebKit
 
 struct HomeView: View {
     // MARK: - State Variables
@@ -29,7 +30,8 @@ struct HomeView: View {
     @State private var isSpotifyConnected: Bool = false // Track Spotify connection status
     @State private var userCoins: Int = 100 // User Coin
     @State private var showingPauseConfirmation: Bool = false
-    @State private var showCompletionNotification: Bool = true
+    @State private var showCompletionNotification: Bool = false
+    @State private var showFailedNotification: Bool = false
     @State private var completionMessage: String = ""
     @State private var hasLoggedMood: Bool = false // variable to track mood logging
     // Array of images for the timer
@@ -250,7 +252,7 @@ struct HomeView: View {
                         VStack(spacing: 0) {
                             
                             // MARK: - Timer Display with Tap to Edit
-                            Text(timeString(from: remainingTime))
+                              Text(timeString(from: remainingTime))
                                 .font(.system(size: 48, weight: .bold, design: .rounded)) // Large, rounded font
                                 .foregroundColor(Color(red: 33 / 255, green: 105 / 255, blue: 208 / 255)) // Custom blue color
                                 .shadow(color: Color.black.opacity(0.3), radius: 4, x: 0, y: 2) // Subtle shadow for depth
@@ -605,6 +607,7 @@ struct HomeView: View {
                                         circleProgress = 0.0 // Reset progress bar
                                         currentImageIndex = 0 // Reset pet's growth
                                         showingPauseConfirmation = false // Close popup
+                                        showFailedNotification = true    // Show failed mission window
                                     }
                                 }) {
                                 
@@ -669,13 +672,14 @@ struct HomeView: View {
                                     Button(action: {
                                         showingMoodInput = true
                                     }) {
-                                        Text("Log Your Mood")
-                                            .foregroundColor(.black)
+                                        Text("Log Mood")
+                                            .foregroundColor(Color(red: 0 / 255, green: 140 / 255, blue: 89 / 255))
                                             .padding()
                                             .frame(maxWidth: .infinity)
-                                            .background(Color(red: 250 / 255, green: 245 / 255, blue: 234 / 255))
+                                            .background(Color(red: 212 / 255, green: 249 / 255, blue: 204 / 255))
                                             .cornerRadius(12)
                                             .font(.custom("Noteworthy", size: 16))
+                                           
                                     }
                                 }
                                 
@@ -687,15 +691,15 @@ struct HomeView: View {
                                         }
                                     }
                                 }) {
-                                    HStack {
+                                    HStack(spacing: 5) {
                                         Image("coin")
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(width: 20, height: 20)
+                                            .frame(width: 30, height: 30)
                                         Text("50") // Number of coins earned
                                             .font(.custom("Noteworthy", size: 16))
                                             .foregroundColor(.yellow)
-                                            .fontWeight(.bold)
+                                            .fontWeight(.heavy)
                                     }
                                     .padding()
                                     .frame(maxWidth: .infinity)
@@ -714,8 +718,73 @@ struct HomeView: View {
                     }
                 }
 
+                // Mission Failed
+                if showFailedNotification {
+                    ZStack {
+                        // Dimmed background
+                        Color.black.opacity(0.6)
+                            .edgesIgnoringSafeArea(.all)
 
-                
+                        VStack(spacing: 20) {
+                            // Mission Failed Title
+                            Text("Mission Failed")
+                                .foregroundColor(Color(red: 245 / 255, green: 245 / 255, blue: 245 / 255))
+                                .fontWeight(.bold)
+                                .font(.custom("Noteworthy", size: 20))
+
+                            // GIF Display (WebView for pet_rip.gif)
+                            WebViewGIF(gifName: "pet_rip")
+                                .frame(width: 150, height: 150)
+
+                            // Mission Failed Message
+                            Text("Your pet couldn't survive this time...")
+                                .foregroundColor(Color(red: 245 / 255, green: 245 / 255, blue: 245 / 255))
+                                .fontWeight(.bold)
+                                .font(.custom("Noteworthy", size: 16))
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: .infinity)
+
+                            // Retry Button
+                            Button(action: {
+                                withAnimation {
+                                    showFailedNotification = false
+                                    // Logic for retrying the mission
+                                }
+                            }) {
+                                Text("Retry")
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color(red: 171 / 255, green: 48 / 255, blue: 255 / 255))
+                                    .cornerRadius(12)
+                                    .font(.custom("Noteworthy", size: 16))
+                                    .fontWeight(.bold)
+                            }
+
+                            // Dismiss Button
+                            Button(action: {
+                                withAnimation {
+                                    showFailedNotification = false
+                                }
+                            }) {
+                                Text("Dismiss")
+                                    .foregroundColor(Color(red: 51 / 255, green: 51 / 255, blue: 51 / 255))
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.gray)
+                                    .cornerRadius(12)
+                                    .font(.custom("Noteworthy", size: 16))
+                                    .fontWeight(.bold)
+                            }
+                        }
+                        .padding()
+                        .frame(width: 300, height: 450)
+                        .background(Color(red: 136 / 255, green: 77 / 255, blue: 179 / 255).opacity(0.9))
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
+                    }
+                }
+
 
                 // Zstack end here
             }
@@ -731,7 +800,7 @@ struct HomeView: View {
                 showCompletionNotification = true // Trigger the notification
                 completionMessage = "Well done! Your pet is growing stronger!" // Set the message
 
-                // Optional: Reward coins or progress
+                // Reward coins or progress
                 userCoins += 5 // Reward the user with coins
             }
         }
@@ -965,6 +1034,26 @@ struct MoodInputView: View {
         }
     }
 }
+
+struct WebViewGIF: UIViewRepresentable {
+    let gifName: String
+
+    func makeUIView(context: Context) -> WKWebView {
+        let webView = WKWebView()
+        webView.isOpaque = false
+        webView.backgroundColor = .clear
+        return webView
+    }
+
+    func updateUIView(_ webView: WKWebView, context: Context) {
+        if let path = Bundle.main.path(forResource: gifName, ofType: "gif") {
+            let url = URL(fileURLWithPath: path)
+            let request = URLRequest(url: url)
+            webView.load(request)
+        }
+    }
+}
+
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
