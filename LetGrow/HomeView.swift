@@ -1029,7 +1029,7 @@ struct MoodInputView: View {
                     .frame(width: 100, height: 100)
                     .background {
                         Circle().fill(selectedMood == moodImages[imageIndex]
-                          ? Color.green.opacity(0.3)
+                                      ? Color.white.opacity(0.4)
                           : Color.clear
                         )
                     }
