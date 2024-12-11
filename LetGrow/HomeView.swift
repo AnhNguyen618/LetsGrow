@@ -30,7 +30,7 @@ struct HomeView: View {
     @State private var isSpotifyConnected: Bool = false // Track Spotify connection status
     @State private var userCoins: Int = 100 // User Coin
     @State private var showingPauseConfirmation: Bool = false
-    @State private var showCompletionNotification: Bool = false
+    @State private var showCompletionNotification: Bool = true
     @State private var showFailedNotification: Bool = false
     @State private var completionMessage: String = ""
     @State private var hasLoggedMood: Bool = false // variable to track mood logging
@@ -400,7 +400,7 @@ struct HomeView: View {
 
                             Text("Lockdown Mode Activated")
                                 .font(.headline)
-                                .foregroundColor(Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255))
+                                .foregroundColor(Color(red: 235 / 255, green: 138 / 255, blue: 170 / 255))
                                 .font(.custom("Noteworthy", size: 16))
                                 .fontWeight(.bold)
 
@@ -410,7 +410,7 @@ struct HomeView: View {
                                 .multilineTextAlignment(.center)
                                 .font(.custom("Noteworthy", size: 16))
                                 .padding(.horizontal)
-                                .foregroundColor(Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255).opacity(0.8))
+                                .foregroundColor(Color(red: 235 / 255, green: 138 / 255, blue: 170 / 255))
 
                             Button("Got it!") {
                                 withAnimation {
@@ -418,20 +418,23 @@ struct HomeView: View {
                                 }
                             }
                             .padding()
-                            .background(Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255))
+                            .frame(maxWidth: .infinity)
+                            .background(Color(red: 235 / 255, green: 138 / 255, blue: 170 / 255))
                             .foregroundColor(.white)
                             .cornerRadius(10)
                             .font(.custom("Noteworthy", size: 16))
                             .fontWeight(.semibold)
                         }
-                        .padding() //49/74/103
-                        .background(Color(red: 49 / 255, green: 74 / 255, blue: 103 / 255).opacity(0.9))
+                        .padding()
+                        .background(Color(red: 252 / 255, green: 245 / 255, blue: 234 / 255).opacity(0.9))
                         .cornerRadius(20)
                         .shadow(radius: 10)
-                        .transition(.opacity) // Smooth fade-out
-                        .animation(.easeInOut, value: showingLockdownPopup)
+                        .frame(maxWidth: 300) // Matches the Lockdown Off window size
                     }
+                    .transition(.opacity) // Smooth fade-out
+                    .animation(.easeInOut, value: showingLockdownPopup)
                 }
+
                 // LOCKDOWN OFF WINDOW
                 if showingLockdownDeactivationPopup {
                     ZStack {
@@ -455,7 +458,6 @@ struct HomeView: View {
                                 .font(.custom("Noteworthy", size: 16))
                                 .fontWeight(.bold)
                                 .foregroundColor(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
-                            
 
                             Text("Feel free to explore other tasks!")
                                 .font(.custom("Noteworthy", size: 16))
@@ -478,7 +480,7 @@ struct HomeView: View {
                             .fontWeight(.semibold)
                         }
                         .padding()
-                        .background(Color(red: 79 / 255, green: 104 / 255, blue: 133 / 255).opacity(0.9))
+                        .background(Color(red: 252 / 255, green: 245 / 255, blue: 234 / 255).opacity(0.9))
                         .cornerRadius(20)
                         .shadow(radius: 10)
                         .frame(maxWidth: 300) // Ensures consistent size
@@ -510,7 +512,7 @@ struct HomeView: View {
                                 .font(.custom("Noteworthy", size: 16))
                                 .fontWeight(.bold)
                             
-                            Text("Play your favorite focus playlists from Spotify !")
+                            Text("Play your favorite focus playlists from Spotify!")
                                 .font(.subheadline)
                                 .multilineTextAlignment(.center)
                                 .foregroundColor(.green.opacity(0.8))
@@ -532,18 +534,21 @@ struct HomeView: View {
                             }
                             .padding(.horizontal)
 
-                            Button("Dismiss") {
+                            Button(action: {
                                 withAnimation {
                                     showingSpotifyPopup = false
                                 }
+                            }) {
+                                Text("Dismiss")
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.white)
+                                    .foregroundColor(.green)
+                                    .cornerRadius(10)
+                                    .font(.custom("Noteworthy", size: 16))
+                                    .fontWeight(.bold)
                             }
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white)
-                            .foregroundColor(.green)
-                            .cornerRadius(10)
-                            .font(.custom("Noteworthy", size: 16))
-                            .fontWeight(.semibold)
+                            .padding(.horizontal)
                         }
                         .padding()
                         .background(Color(red: 252 / 255, green: 245 / 255, blue: 234 / 255).opacity(0.9))
@@ -567,22 +572,22 @@ struct HomeView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 150, height: 150)
-                                .padding(.top,20)
+                                .padding(.top, 20)
 
                             Text("Your pet believes in you!")
                                 .font(.custom("Noteworthy", size: 16))
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .fontWeight(.bold) //235/138/170
+                                .foregroundColor(Color(red: 235 / 255, green: 138 / 255, blue: 170 / 255))
 
                             Text("Stopping now will reset your progress, but your pet believes in you to stay focused!")
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(.white.opacity(0.8))
+                                .foregroundColor(Color(red: 235 / 255, green: 138 / 255, blue: 170 / 255))
                                 .padding(.horizontal)
                                 .font(.custom("Noteworthy", size: 16))
                                 .fontWeight(.semibold)
 
-                            HStack(spacing: 20) {
-                                // Cancel Button
+                            VStack(spacing: 15) { // Buttons in vertical stack
+                                // Stay Button
                                 Button(action: {
                                     withAnimation {
                                         showingPauseConfirmation = false // Close popup
@@ -591,14 +596,14 @@ struct HomeView: View {
                                     Text("Stay")
                                         .foregroundColor(.white)
                                         .padding()
-                                        .frame(width: 120)
+                                        .frame(maxWidth: .infinity) // Matches parent width
                                         .background(Color.green)
                                         .cornerRadius(10)
                                         .font(.custom("Noteworthy", size: 16))
                                         .fontWeight(.semibold)
                                 }
 
-                                // Confirm Button
+                                // Leave Button
                                 Button(action: {
                                     withAnimation {
                                         // Reset timer and progress
@@ -607,23 +612,23 @@ struct HomeView: View {
                                         circleProgress = 0.0 // Reset progress bar
                                         currentImageIndex = 0 // Reset pet's growth
                                         showingPauseConfirmation = false // Close popup
-                                        showFailedNotification = true    // Show failed mission window
+                                        showFailedNotification = true // Show failed mission window
                                     }
                                 }) {
-                                
                                     Text("Leave")
-                                    .foregroundColor(Color(red: 235 / 255, green: 85 / 255, blue: 135 / 255))
-                                    .padding()
-                                    .frame(width: 120)
-                                    .background(Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255))
-                                    .cornerRadius(10)
-                                    .font(.custom("Noteworthy", size: 16))
-                                    .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .frame(maxWidth: .infinity) // Matches parent width 248/66/66
+                                        .background(Color(red: 248 / 255, green: 66 / 255, blue: 66 / 255))
+                                        .cornerRadius(10)
+                                        .font(.custom("Noteworthy", size: 16))
+                                        .fontWeight(.semibold)
                                 }
                             }
+                            .padding(.horizontal) // Align buttons within parent
                         }
                         .padding()
-                        .background(Color(red: 235 / 255, green: 85 / 255, blue: 135 / 255).opacity(0.8))
+                        .background(Color(red: 252 / 255, green: 245 / 255, blue: 234 / 255).opacity(0.9))
                         .cornerRadius(20)
                         .shadow(radius: 10)
                         .frame(maxWidth: 300) // Ensures consistent size
@@ -631,8 +636,6 @@ struct HomeView: View {
                     .transition(.opacity) // Smooth fade-in/out
                     .animation(.easeInOut, value: showingPauseConfirmation)
                 }
-                
-
 
                 // Reward Information Window
                 if showCompletionNotification {
@@ -650,8 +653,9 @@ struct HomeView: View {
                             // Reward Info Box
                             VStack(spacing: 15) {
                                 
-                                Text("Welcome Your New Pet!")
-                                    .foregroundColor(Color.yellow)
+                                Text("Welcome Your New Pet!") //235/138/170
+                                .foregroundColor(Color(red: 235 / 255, green: 138 / 255, blue: 170 / 255))
+
                                     .fontWeight(.bold)
                                     .font(.custom("Noteworthy", size: 20))
                                 
@@ -661,7 +665,7 @@ struct HomeView: View {
                                     .frame(width: 200, height: 100)
 
                                     Text("Log your mood to claim your reward!")
-                                        .foregroundColor(Color.yellow)
+                                    .foregroundColor(Color(red: 235 / 255, green: 138 / 255, blue: 170 / 255))
                                         .fontWeight(.bold)
                                         .font(.custom("Noteworthy", size: 16))
                                    
@@ -673,12 +677,14 @@ struct HomeView: View {
                                         showingMoodInput = true
                                     }) {
                                         Text("Log Mood")
-                                            .foregroundColor(Color(red: 0 / 255, green: 140 / 255, blue: 89 / 255))
+                                            .foregroundColor(.white)
                                             .padding()
                                             .frame(maxWidth: .infinity)
-                                            .background(Color(red: 212 / 255, green: 249 / 255, blue: 204 / 255))
+                                            //.background(Color(red: 212 / 255, green: 249 / 255, blue: 204 / 255))
+                                            .background(.yellow)
                                             .cornerRadius(12)
                                             .font(.custom("Noteworthy", size: 16))
+                                            .fontWeight(.semibold)
                                            
                                     }
                                 }
@@ -711,7 +717,8 @@ struct HomeView: View {
                             }
                             .padding()
                             .frame(width: 300, height: 400) // Adjust box size
-                            .background(Color(red: 0 / 255, green: 140 / 255, blue: 89 / 255).opacity(0.9))
+                            //.background(Color(red: 0 / 255, green: 140 / 255, blue: 89 / 255).opacity(0.9))
+                            .background(Color(red: 252 / 255, green: 245 / 255, blue: 234 / 255).opacity(0.9))
                             .cornerRadius(20)
                             .shadow(radius: 10)
                         }
@@ -728,7 +735,7 @@ struct HomeView: View {
                         VStack(spacing: 20) {
                             // Mission Failed Title
                             Text("Mission Failed")
-                                .foregroundColor(Color(red: 245 / 255, green: 245 / 255, blue: 245 / 255))
+                                .foregroundColor(.black)
                                 .fontWeight(.bold)
                                 .font(.custom("Noteworthy", size: 20))
 
@@ -738,7 +745,7 @@ struct HomeView: View {
 
                             // Mission Failed Message
                             Text("Your pet couldn't survive this time...")
-                                .foregroundColor(Color(red: 245 / 255, green: 245 / 255, blue: 245 / 255))
+                                .foregroundColor(.black)
                                 .fontWeight(.bold)
                                 .font(.custom("Noteworthy", size: 16))
                                 .multilineTextAlignment(.center)
@@ -752,10 +759,10 @@ struct HomeView: View {
                                 }
                             }) {
                                 Text("Retry")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.black)
                                     .padding()
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color(red: 171 / 255, green: 48 / 255, blue: 255 / 255))
+                                    .frame(maxWidth: .infinity) //235/138/170
+                                    .background(Color(red: 235 / 255, green: 138 / 255, blue: 170 / 255))
                                     .cornerRadius(12)
                                     .font(.custom("Noteworthy", size: 16))
                                     .fontWeight(.bold)
@@ -779,8 +786,8 @@ struct HomeView: View {
                         }
                         .padding()
                         .frame(width: 300, height: 450)
-                        .background(Color(red: 136 / 255, green: 77 / 255, blue: 179 / 255).opacity(0.9))
-                        .cornerRadius(20)
+                        //.background(Color(red: 136 / 255, green: 77 / 255, blue: 179 / 255).opacity(0.9))
+                        .background(Color(red: 252 / 255, green: 245 / 255, blue: 234 / 255).opacity(0.9))                    .cornerRadius(20)
                         .shadow(radius: 10)
                     }
                 }

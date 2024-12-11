@@ -7,7 +7,7 @@ struct ProfileView: View {
     var body: some View {
         ZStack {
             // Background image or color
-            Image("background")
+            Image("profile_background")
                 .resizable()
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.all)
@@ -42,19 +42,19 @@ struct ProfileView: View {
                     
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Username: abc")
-                            .font(.headline)
+                            .font(.custom("Noteworthy", size: 20))
                             .foregroundColor(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
                         
                         Text("Email: abc@gmail.com")
-                            .font(.subheadline)
+                            .font(.custom("Noteworthy", size: 20))
                             .foregroundColor(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
                         
                         Text("Your Pets: 7")
-                            .font(.subheadline)
+                            .font(.custom("Noteworthy", size: 20))
                             .foregroundColor(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
                         
                         Text("Total Grow Time: 32 hours")
-                            .font(.subheadline)
+                            .font(.custom("Noteworthy", size: 20))
                             .foregroundColor(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
                     }
                     .padding(.leading, 10)
@@ -64,29 +64,29 @@ struct ProfileView: View {
                 // Session Statistics Section
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Focus Timer Stats")
-                        .font(.headline)
+                        .font(.custom("Noteworthy", size: 20))
                         .foregroundColor(Color(red: 254 / 255, green: 161 / 255, blue: 192 / 255))
                     
                     HStack {
                         VStack(alignment: .leading) {
                             Text("Total Sessions Completed:")
-                                .font(.subheadline)
+                                .font(.custom("Noteworthy", size: 20))
                                 .foregroundColor(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
                             Text("45")
-                                .font(.title2)
+                                .font(.custom("Noteworthy", size: 20))
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(red: 22 / 255, green: 98 / 255, blue: 205 / 255))
                         }
                         Spacer()
                         
                         VStack(alignment: .leading) {
                             Text("Total Focus Time:")
-                                .font(.subheadline)
+                                .font(.custom("Noteworthy", size: 20))
                                 .foregroundColor(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
                             Text("32 hours")
-                                .font(.title2)
+                                .font(.custom("Noteworthy", size: 20))
                                 .fontWeight(.bold)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(red: 22 / 255, green: 98 / 255, blue: 205 / 255))
                         }
                     }
                     .padding()
@@ -99,7 +99,7 @@ struct ProfileView: View {
                     // Navigate to the password change section
                 }) {
                     Text("Link your Institution")
-                        .font(.title)
+                        .font(.custom("Noteworthy", size: 20))
                         .padding()
                         .background(Color(red: 126 / 255, green: 182 / 255, blue: 247 / 255))
                         .foregroundColor(.white)
@@ -115,10 +115,10 @@ struct ProfileView: View {
                         navigateToLogin = true // Navigate to LoginView
                     }
                 }) {
-                    Text(isLoggedIn ? "Log Out" : "Log In") // Change label based on state
-                        .font(.title)
+                    Text(isLoggedIn ? "Log Out" : "Log In")
+                        .font(.custom("Noteworthy", size: 20))
                         .padding()
-                        .background(isLoggedIn ? Color.red : Color.green) // Different background colors
+                        .background(isLoggedIn ? Color.red : Color(red: 255 / 255, green: 184 / 255, blue: 195 / 255))
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
@@ -138,6 +138,7 @@ struct ProfileView: View {
         }
     }
 }
+
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView()
