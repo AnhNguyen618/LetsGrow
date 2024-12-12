@@ -30,7 +30,7 @@ struct HomeView: View {
     @State private var isSpotifyConnected: Bool = false // Track Spotify connection status
     @State private var userCoins: Int = 100 // User Coin
     @State private var showingPauseConfirmation: Bool = false
-    @State private var showCompletionNotification: Bool = true
+    @State private var showCompletionNotification: Bool = false
     @State private var showFailedNotification: Bool = false
     @State private var completionMessage: String = ""
     @State private var hasLoggedMood: Bool = false // variable to track mood logging
@@ -738,11 +738,11 @@ struct HomeView: View {
                                 .foregroundColor(.black)
                                 .fontWeight(.bold)
                                 .font(.custom("Noteworthy", size: 20))
-
-                            // GIF Display (WebView for pet_rip.gif)
-                            WebViewGIF(gifName: "pet_rip")
-                                .frame(width: 150, height: 150)
-
+                            // image pet cry
+                            Image("pet_die")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 200, height: 150)
                             // Mission Failed Message
                             Text("Your pet couldn't survive this time...")
                                 .foregroundColor(.black)
@@ -1038,25 +1038,6 @@ struct MoodInputView: View {
                     .font(.custom("Noteworthy", size: 16))
                     .fontWeight(.semibold)
             }
-        }
-    }
-}
-
-struct WebViewGIF: UIViewRepresentable {
-    let gifName: String
-
-    func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
-        webView.isOpaque = false
-        webView.backgroundColor = .clear
-        return webView
-    }
-
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        if let path = Bundle.main.path(forResource: gifName, ofType: "gif") {
-            let url = URL(fileURLWithPath: path)
-            let request = URLRequest(url: url)
-            webView.load(request)
         }
     }
 }

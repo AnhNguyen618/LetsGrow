@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A90535E22D03E072000E6AF9 /* pet_rip.gif in Resources */ = {isa = PBXBuildFile; fileRef = A90535E12D03E072000E6AF9 /* pet_rip.gif */; };
 		A931873C2CEF520C0032BAED /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A931873B2CEF520C0032BAED /* LoginView.swift */; };
 		A931873E2CEF53CC0032BAED /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A931873D2CEF53CC0032BAED /* SignupView.swift */; };
 		A98294922CAA8F3E00408465 /* LetGrowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98294912CAA8F3E00408465 /* LetGrowApp.swift */; };
@@ -22,7 +21,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A90535E12D03E072000E6AF9 /* pet_rip.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = pet_rip.gif; sourceTree = "<group>"; };
 		A931873B2CEF520C0032BAED /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		A931873D2CEF53CC0032BAED /* SignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupView.swift; sourceTree = "<group>"; };
 		A982948E2CAA8F3E00408465 /* LetGrow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LetGrow.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -53,7 +51,6 @@
 			children = (
 				A98294902CAA8F3E00408465 /* LetGrow */,
 				A982948F2CAA8F3E00408465 /* Products */,
-				A90535E12D03E072000E6AF9 /* pet_rip.gif */,
 			);
 			sourceTree = "<group>";
 		};
@@ -149,7 +146,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A90535E22D03E072000E6AF9 /* pet_rip.gif in Resources */,
 				A98294992CAA8F4000408465 /* Preview Assets.xcassets in Resources */,
 				A98294962CAA8F4000408465 /* Assets.xcassets in Resources */,
 			);
